@@ -37,4 +37,5 @@ then
     exit 3
 fi
 #Notify slack that the 
+date=`date`
 /home/ec2-user/slackNotify.sh "Deploy Complete at $date."
