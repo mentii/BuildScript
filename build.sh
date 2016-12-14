@@ -32,7 +32,7 @@ if ! git clone https://github.com/mentii/mentii.git
 then
     error_msg="Failed to clone the mentii repository"
     echo >&2 $error_msg
-    /home/asp78/slacknotify.sh "Build Failed at $date. Latest commit: $git_last. Reason: $error_msg"
+    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit: $git_last. Reason: $error_msg"
     exit 3
 fi
 
@@ -44,7 +44,7 @@ if ! git checkout $1
 then
     error_msg="Failed to checkout branch '$1'"
     echo >&2 $error_msg
-    /home/asp78/slacknotify.sh "Build Failed at $date. Latest commit: $git_last. Reason: $error_msg"
+    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit: $git_last. Reason: $error_msg"
     exit 4
 fi
 
@@ -59,7 +59,7 @@ if ! make -S compile
 then
     error_msg="Failed to compile"
     echo >&2 $error_msg
-    /home/asp78/slacknotify.sh "Build Failed at $date. Latest commit: $git_last. Reason: $error_msg"
+    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit: $git_last. Reason: $error_msg"
     exit 5
 fi
 
@@ -82,6 +82,6 @@ rm -rf $mentii_repo_dir
 ## Send slack notification
 echo "SENDING SLACK NOTIFICATION"
 date=`date`
-/home/asp78/slacknotify.sh "Build Complete at $date. Latest commit: $git_last"
+/home/asp78/SD/slacknotify.sh "Build Complete at $date. Latest commit: $git_last"
 
 echo "DONE!"
