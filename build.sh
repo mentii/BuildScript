@@ -2,40 +2,45 @@
 
 ## $1 : branch_name
 
-## Update git repo
-echo "UPDATING GIT REPO"
-cd /home/asp78/git/mentii
-git fetch
-git clean -fd
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+    exit 1
+fi
+
+## Get current git repo
+cd /home/asp78/git/
+rm -rf ./mentii/
+git clone https://github.com/mentii/mentii.git
+cd ./mentii/
 git checkout $1
-git pull
 
 ## Remove .git and .gitignore
 echo "REMOVING .git AND .gitignore FILES"
-mv ./.git/ ../
-mv ./.gitignore ../
+git_last=`git log --pretty=format:'%h' -n 1`
+rm -rf ./.git/ ./.gitignore
 
 ## Build
 echo "BUILDING PROJECT"
 make compile
+
+## Remove unused files
+echo "REMOVING UNUSED FILES"
 find . -name "*.js.map" -type f -delete
 find . -name "*.ts" -type f -delete
-cd ..
 
 
 ## Tar it up and move it
+cd /home/asp78/git/
 echo "TARING UP AND MOVING PROJECT"
 tar -cf build.tar ./mentii
 mv --backup=numbered ./build.tar /home/asp78/public_html/builds/build.tar
 
-## Replace  .git and .gitignore
-cd /home/asp78/git
-mv ./.git/ ./mentii/
-mv ./.gitignore ./mentii/
+## Delete repo
+cd ./mentii
+#rm -rf ./mentii/
 
 ## Send slack notification
 date=`date`
-cd /home/asp78/git/mentii
-git_last=`git log --pretty=format:'%h' -n 1`
-#/home/asp78/slacknotify.sh "Build Complete at $date. Latest commit: $git_last"
+/home/asp78/slacknotify.sh "Build Complete at $date. Latest commit: $git_last"
 echo "DONE!"
