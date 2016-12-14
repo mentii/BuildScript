@@ -90,6 +90,10 @@ then
     exit 5
 fi
 
+## Delete Virtual Environment
+echo "REMOVING VIRTUAL ENVIRONMENT"
+rm -rf $mentii_repo_dir/Backend/env
+
 ## Remove unused .ts and .js.map files from the project
 ## to shave off some size
 echo "REMOVING UNUSED FILES FROM PROJECT"
