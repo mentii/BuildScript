@@ -97,6 +97,10 @@ then
     exit 5
 fi
 
+## Kill database xterm - super bad
+echo "KILLING THE DATABASE PROCESS"
+pkill -9 xterm
+
 ## Delete Virtual Environment
 echo "REMOVING VIRTUAL ENVIRONMENT"
 rm -rf $mentii_repo_dir/Backend/env
