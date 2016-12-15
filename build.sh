@@ -55,12 +55,17 @@ cd $mentii_repo_dir
 
 if ! git checkout $1
 then
+    rm -rf $mentii_repo_dir
     error_msg="Failed to checkout branch '$1'"
     date=`date`
     echo >&2 $error_msg
     /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     exit 4
 fi
+
+## Change group permissions to our group
+echo "CHANGING GROUP PERMISSIONS OF REPO"
+chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
 
 ## Remove .git and .gitignore files
 echo "REMOVING .git AND .gitignore FILES"
@@ -84,6 +89,7 @@ echo "RUNNING TESTS"
 cd $mentii_repo_dir
 if ! make runtests-nocompile
 then
+    rm -rf $mentii_repo_dir
     error_msg="Failed to pass tests"
     date=`date`
     echo >&2 $error_msg
