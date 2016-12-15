@@ -71,6 +71,7 @@ rm -rf $mentii_repo_dir/.git/ $mentii_repo_dir/.gitignore
 echo "BUILDING PROJECT"
 if ! make compile
 then
+    rm -rf $mentii_repo_dir
     error_msg="Failed to compile"
     date=`date`
     echo >&2 $error_msg
