@@ -1,9 +1,13 @@
 #!/bin/bash
 
-#Move to the builds dir and do everything there
-cd ~/builds
+home_dir='/home/ec2-user'
+mentii_repo_dir="$home_dir/mentii"
+builds_dir="$home_dir/builds"
+
 #wget the tar file from the build server
-if ! wget -O new.build.tar https://cs.drexel.edu/~asp78/builds/build.tar
+echo "GETTING THE TAR FILE FROM TUX"
+cd $builds_dir
+if ! wget --no-verbose -O new.build.tar https://cs.drexel.edu/~asp78/builds/build.tar
 then
     error_msg="Failed to wget file"
     date=`date`
@@ -12,13 +16,19 @@ then
     exit 1
 fi
 mv --backup=numbered new.build.tar build.tar
+
 #remove the current mentii directory
-cd ..
-rm -rf ./mentii
+echo "DELETING THE CURRENT MENTII REPOISTORY"
+rm -rf $mentii_repo_dir
+
 #untar the tar from the build server
-tar -xvf ./builds/build.tar
+echo "UNTARING THE FILE"
+cd $home_dir
+tar -xf $builds_dir/build.tar
+
 #Make deploy
-cd mentii
+echo "DEPLOYING THE APPLICATION"
+cd $mentii_repo_dir
 if ! make deploy
 then
     error_msg="Failed to deploy application"
@@ -27,7 +37,9 @@ then
     /home/ec2-user/slackNotify.sh "Deploy Failed at $date. Reason: $error_msg"
     exit 2
 fi
+
 #Restart the server
+echo "RESTARTING THE SERVER"
 if ! sudo service httpd restart
 then
     error_msg="Failed to restart server"
@@ -36,6 +48,8 @@ then
     /home/ec2-user/slackNotify.sh "Deploy Failed at $date. Reason: $error_msg"
     exit 3
 fi
+
 #Notify slack that the 
+echo "SENDING SLACK NOTIFICATION"
 date=`date`
 /home/ec2-user/slackNotify.sh "Deploy Complete at $date."
