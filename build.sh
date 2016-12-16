@@ -5,6 +5,7 @@
 ## $2+  : flags
 
 deploy_flag=true
+slack_flag=true
 
 ## If no arguments are given, terminate since
 ## it does not know which branch to use
@@ -20,6 +21,9 @@ do
   if [ $i == "--no-deploy" ] ; then
     deploy_flag=false
     echo "Not deploying to AWS post build."
+  elif [ $i == "--quiet" ] ; then
+    slack_flag=false
+    echo "Not sending slack notifications."
   fi
 done
 
@@ -45,7 +49,10 @@ then
     error_msg="Failed to clone the mentii repository"
     date=`date`
     echo >&2 $error_msg
-    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    if $slack_flag
+    then
+      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    fi
     exit 3
 fi
 
@@ -59,7 +66,10 @@ then
     error_msg="Failed to checkout branch '$1'"
     date=`date`
     echo >&2 $error_msg
-    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    if $slack_flag
+    then
+      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    fi
     exit 4
 fi
 
@@ -80,7 +90,10 @@ then
     error_msg="Failed to compile"
     date=`date`
     echo >&2 $error_msg
-    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    if $slack_flag
+    then
+      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    fi
     exit 6
 fi
 
@@ -93,7 +106,10 @@ then
     error_msg="Failed to pass tests"
     date=`date`
     echo >&2 $error_msg
-    /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    if $slack_flag
+    then
+      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+    fi
     exit 5
 fi
 
@@ -125,7 +141,10 @@ rm -rf $mentii_repo_dir
 ## Send slack notification
 echo "SENDING SLACK NOTIFICATION"
 date=`date`
-/home/asp78/SD/slacknotify.sh "Build Complete at $date. Latest commit on $1: $git_last"
+if $slack_flag
+then
+  /home/asp78/SD/slacknotify.sh "Build Complete at $date. Latest commit on $1: $git_last"
+fi
 
 ## Deploy if deploy_flag is true
 if $deploy_flag
