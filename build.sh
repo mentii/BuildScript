@@ -16,9 +16,23 @@ if [ $# -eq 0 ]
 fi
 
 ## Iterate through flags
-for i in ${*:2}
+for i in ${*:1}
 do
-  if [ $i == "--no-deploy" ] ; then
+  if [ $i == "-h" ] ; then
+    echo "To run the build script, make sure you are on TWINKLE with (-X) X11 forwarding and then:"
+    echo ""
+    echo "build.sh BRANCH_NAME [FLAG1 FLAG2 ... FLAGN]"
+    echo ""
+    echo "and YES the flags must come after the BRANCH_NAME. This ain't some fancy script."
+    echo ""
+    echo "Here are the allowed flags:"
+    echo "-h            Displays this gorgeous help screen"
+    echo "--no-deploy   Does not automatically deploy the tarball post build"
+    echo "--quiet       Does not send slack notifications on success OR failure"
+    echo ""
+    echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
+    exit 0
+  elif [ $i == "--no-deploy" ] ; then
     deploy_flag=false
     echo "Not deploying to AWS post build."
   elif [ $i == "--quiet" ] ; then
