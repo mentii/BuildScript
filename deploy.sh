@@ -10,7 +10,7 @@ cd $builds_dir
 if ! wget --no-verbose -O new.build.tar https://cs.drexel.edu/~asp78/builds/build.tar
 then
     error_msg="Failed to wget file"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     /home/ec2-user/slackNotify.sh "Deploy Failed at $date. Reason: $error_msg"
     exit 1
@@ -32,7 +32,7 @@ cd $mentii_repo_dir
 if ! make deploy
 then
     error_msg="Failed to deploy application"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     /home/ec2-user/slackNotify.sh "Deploy Failed at $date. Reason: $error_msg"
     exit 2
@@ -43,7 +43,7 @@ echo "RESTARTING THE SERVER"
 if ! sudo service httpd restart
 then
     error_msg="Failed to restart server"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     /home/ec2-user/slackNotify.sh "Deploy Failed at $date. Reason: $error_msg"
     exit 3
@@ -51,5 +51,5 @@ fi
 
 #Notify slack that the 
 echo "SENDING SLACK NOTIFICATION"
-date=`date`
+date=`TZ="America/New_York" date`
 /home/ec2-user/slackNotify.sh "Deploy Complete at $date."

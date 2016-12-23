@@ -4,6 +4,15 @@
 ## $1   : branch_name (required)
 ## $2+  : flags
 
+## If another build process is in progress, don't start
+if [ -f ./buildIsInProgress.tmp ] ; then
+  echo >&2 "Another person is running this right now, wait a sec."
+  exit 1
+else
+  touch ./buildIsInProgress.tmp
+  chown -f :mentil_senior_proj_1617 ./buildIsInProgress.tmp
+fi
+
 deploy_flag=true
 slack_flag=true
 
@@ -12,7 +21,8 @@ slack_flag=true
 if [ $# -eq 0 ]
   then
     echo >&2 "No arguments supplied"
-    exit 1
+    rm -f ./buildIsInProgress.tmp
+    exit 2
 fi
 
 ## Iterate through flags
@@ -31,6 +41,7 @@ do
     echo "--quiet       Does not send slack notifications on success OR failure"
     echo ""
     echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
+    rm -f ./buildIsInProgress.tmp
     exit 0
   elif [ $i == "--no-deploy" ] ; then
     deploy_flag=false
@@ -46,7 +57,16 @@ repo_exists=`git ls-remote --heads https://github.com/mentii/mentii.git $1 | wc 
 
 if [ $repo_exists == '0' ]; then
   echo >&2 "Given branch '$1' does not exist in the mentii repository."
-  exit 2
+  rm -f ./buildIsInProgress.tmp
+  exit 3
+fi
+
+## Send slack message so people know not to kick off another build until its complete,
+## even though they can't anyways.
+date=`TZ="America/New_York" date`
+if $slack_flag
+then
+  /home/asp78/SD/slacknotify.sh "Build Started at $date. Latest commit on $1: $git_last"
 fi
 
 git_repo_dir='/home/asp78/git'
@@ -61,13 +81,14 @@ rm -rf $mentii_repo_dir
 if ! git clone https://github.com/mentii/mentii.git
 then
     error_msg="Failed to clone the mentii repository"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     if $slack_flag
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    exit 3
+    rm -f ./buildIsInProgress.tmp
+    exit 4
 fi
 
 ## Checkout given branch
@@ -78,13 +99,14 @@ if ! git checkout $1
 then
     rm -rf $mentii_repo_dir
     error_msg="Failed to checkout branch '$1'"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     if $slack_flag
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    exit 4
+    rm -f ./buildIsInProgress.tmp
+    exit 5
 fi
 
 ## Change group permissions to our group
@@ -102,12 +124,13 @@ if ! make compile
 then
     rm -rf $mentii_repo_dir
     error_msg="Failed to compile"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     if $slack_flag
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
+    rm -f ./buildIsInProgress.tmp
     exit 6
 fi
 
@@ -118,13 +141,14 @@ if ! make runtests-nocompile
 then
     rm -rf $mentii_repo_dir
     error_msg="Failed to pass tests"
-    date=`date`
+    date=`TZ="America/New_York" date`
     echo >&2 $error_msg
     if $slack_flag
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    exit 5
+    rm -f ./buildIsInProgress.tmp
+    exit 7
 fi
 
 ## Kill database xterm - super bad
@@ -155,7 +179,7 @@ rm -rf $mentii_repo_dir
 
 ## Send slack notification
 echo "SENDING SLACK NOTIFICATION"
-date=`date`
+date=`TZ="America/New_York" date`
 if $slack_flag
 then
   /home/asp78/SD/slacknotify.sh "Build Complete at $date. Latest commit on $1: $git_last"
@@ -167,5 +191,8 @@ then
   echo "Deploying to AWS server"
   ssh aws /home/ec2-user/deploy.sh
 fi
+
+## Remove tmp file so someone else can build
+rm -f ./buildIsInProgress.tmp
 
 echo "DONE!"
