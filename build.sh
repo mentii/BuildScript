@@ -66,7 +66,7 @@ fi
 date=`TZ="America/New_York" date`
 if $slack_flag
 then
-  /home/asp78/SD/slacknotify.sh "Build Started at $date. Latest commit on $1: $git_last"
+  /home/asp78/SD/slacknotify.sh "Build Started at $date for branch $1"
 fi
 
 git_repo_dir='/home/asp78/git'
