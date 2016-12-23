@@ -132,6 +132,7 @@ find . -name "*.ts" -type f -delete
 echo "TARING UP AND MOVING PROJECT TO BUILDS DIRECTORY"
 cd $git_repo_dir
 tar -cf build.tar ./mentii
+chown -f :mentil_senior_proj_1617 ./build.tar
 mv --backup=numbered ./build.tar $builds_dir/build.tar
 
 ## Delete repository
