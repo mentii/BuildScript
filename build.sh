@@ -4,6 +4,11 @@
 ## $1   : branch_name (required)
 ## $2+  : flags
 
+git_repo_dir='/home/asp78/git'
+mentii_repo_dir="$git_repo_dir/mentii"
+builds_dir='/home/asp78/public_html/builds'
+buildScript_dir="$git_repo_dir/BuildScript"
+
 ## If another build process is in progress, don't start
 if [ -f ./buildIsInProgress.tmp ] ; then
   echo >&2 "Another person is running this right now, wait a sec."
@@ -21,7 +26,7 @@ slack_flag=true
 if [ $# -eq 0 ]
   then
     echo >&2 "No arguments supplied"
-    rm -f ./buildIsInProgress.tmp
+    rm -f $buildScript_dir/buildIsInProgress.tmp
     exit 2
 fi
 
@@ -41,7 +46,7 @@ do
     echo "--quiet       Does not send slack notifications on success OR failure"
     echo ""
     echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
-    rm -f ./buildIsInProgress.tmp
+    rm -f $buildScript_dir/buildIsInProgress.tmp
     exit 0
   elif [ $i == "--no-deploy" ] ; then
     deploy_flag=false
@@ -57,7 +62,7 @@ repo_exists=`git ls-remote --heads https://github.com/mentii/mentii.git $1 | wc 
 
 if [ $repo_exists == '0' ]; then
   echo >&2 "Given branch '$1' does not exist in the mentii repository."
-  rm -f ./buildIsInProgress.tmp
+  rm -f $buildScript_dir/buildIsInProgress.tmp
   exit 3
 fi
 
@@ -69,9 +74,6 @@ then
   /home/asp78/SD/slacknotify.sh "Build Started at $date for branch $1"
 fi
 
-git_repo_dir='/home/asp78/git'
-mentii_repo_dir="$git_repo_dir/mentii"
-builds_dir='/home/asp78/public_html/builds'
 
 ## Clone fresh instance of the repo
 echo "CLONING MENTII REPO"
@@ -87,7 +89,7 @@ then
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    rm -f ./buildIsInProgress.tmp
+    rm -f $buildScript_dir/buildIsInProgress.tmp
     exit 4
 fi
 
@@ -105,7 +107,7 @@ then
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    rm -f ./buildIsInProgress.tmp
+    rm -f $buildScript_dir/buildIsInProgress.tmp
     exit 5
 fi
 
@@ -130,7 +132,7 @@ then
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    rm -f ./buildIsInProgress.tmp
+    rm -f $buildScript_dir/buildIsInProgress.tmp
     exit 6
 fi
 
@@ -147,7 +149,7 @@ then
     then
       /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
     fi
-    rm -f ./buildIsInProgress.tmp
+    rm -f $buildScript_dir/buildIsInProgress.tmp
     exit 7
 fi
 
@@ -193,6 +195,6 @@ then
 fi
 
 ## Remove tmp file so someone else can build
-rm -f ./buildIsInProgress.tmp
+rm -f $buildScript_dir/buildIsInProgress.tmp
 
 echo "DONE!"
