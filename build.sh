@@ -89,10 +89,9 @@ cloneMentiiRepository () {
   cd $git_repo_dir
   rm -rf $mentii_repo_dir
 
-  
   setUserName
   updateCurrentDateEST
-  local message="$username has started a build at $currentDateEST."
+  local message="$username has started a build at $currentDateEST for branch '$gitBranch'."
   sendSlackNotification $message
 
   if ! git clone https://github.com/mentii/mentii.git
