@@ -56,6 +56,7 @@ handleAnyFlags() {
   do
     if [ $i == "-h" ] ; then
       printHelpToSTDOUT
+      unlockScript
       exit 0
     elif [ $i == "--no-deploy" ] ; then
       deploy_flag='false'
