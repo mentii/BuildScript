@@ -1,200 +1,260 @@
 #!/bin/bash
 
 ## Parameters ##
-## $1   : branch_name (required)
-## $2+  : flags
+## $1   branch_name (required)
+## $2+  flags
 
+## Script flags
+deploy_flag='true'
+slack_flag='true'
+test_flag='true'
+
+## Locations
 git_repo_dir='/home/asp78/git'
 mentii_repo_dir="$git_repo_dir/mentii"
 builds_dir='/home/asp78/public_html/builds'
 buildScript_dir="$git_repo_dir/BuildScript"
 
-## If another build process is in progress, don't start
-if [ -f ./buildIsInProgress.tmp ] ; then
-  echo >&2 "Another person is running this right now, wait a sec."
-  exit 1
-else
-  touch ./buildIsInProgress.tmp
-  chown -f :mentil_senior_proj_1617 ./buildIsInProgress.tmp
-fi
+## Variables
+gitBranch=''
+gitBranchLastCommit=''
+currentDateEST=''
+errorMessage=''
 
-deploy_flag=true
-slack_flag=true
-
-## If no arguments are given, terminate since
-## it does not know which branch to use
-if [ $# -eq 0 ]
+## Checks if any arguments are passed into this script
+exitIfNoArgumentsGiven() {
+  if [ $1 -eq 0 ]
   then
     echo >&2 "No arguments supplied"
-    rm -f $buildScript_dir/buildIsInProgress.tmp
-    exit 2
-fi
-
-## Iterate through flags
-for i in ${*:1}
-do
-  if [ $i == "-h" ] ; then
-    echo "To run the build script, make sure you are on TWINKLE with (-X) X11 forwarding and then:"
-    echo ""
-    echo "build.sh BRANCH_NAME [FLAG1 FLAG2 ... FLAGN]"
-    echo ""
-    echo "and YES the flags must come after the BRANCH_NAME. This ain't some fancy script."
-    echo ""
-    echo "Here are the allowed flags:"
-    echo "-h            Displays this gorgeous help screen"
-    echo "--no-deploy   Does not automatically deploy the tarball post build"
-    echo "--quiet       Does not send slack notifications on success OR failure"
-    echo ""
-    echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
-    rm -f $buildScript_dir/buildIsInProgress.tmp
-    exit 0
-  elif [ $i == "--no-deploy" ] ; then
-    deploy_flag=false
-    echo "Not deploying to AWS post build."
-  elif [ $i == "--quiet" ] ; then
-    slack_flag=false
-    echo "Not sending slack notifications."
+    unlockScript
+    exit 1
+  else
+    gitBranch=$2
   fi
-done
+}
 
-## If the branch does not exist in the repo, terminate
-repo_exists=`git ls-remote --heads https://github.com/mentii/mentii.git $1 | wc -l`
+## Displays the help text in STDOUT
+printHelpToSTDOUT() {
+  echo "To run the build script, make sure you are on TWINKLE with (-X) X11 forwarding and then:"
+  echo ""
+  echo "build.sh BRANCH_NAME [FLAG1 FLAG2 ... FLAGN]"
+  echo ""
+  echo "and YES the flags must come after the BRANCH_NAME. This ain't some fancy script."
+  echo ""
+  echo "Here are the allowed flags:"
+  echo "-h            Displays this gorgeous help screen"
+  echo "--no-deploy   Does not automatically deploy the tarball post build"
+  echo "--quiet       Does not send slack notifications on success OR failure"
+  echo ""
+  echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
+}
 
-if [ $repo_exists == '0' ]; then
-  echo >&2 "Given branch '$1' does not exist in the mentii repository."
-  rm -f $buildScript_dir/buildIsInProgress.tmp
-  exit 3
-fi
-
-## Send slack message so people know not to kick off another build until its complete,
-## even though they can't anyways.
-date=`TZ="America/New_York" date`
-if $slack_flag
-then
-  /home/asp78/SD/slacknotify.sh "Build Started at $date for branch $1"
-fi
-
-
-## Clone fresh instance of the repo
-echo "CLONING MENTII REPO"
-cd $git_repo_dir
-rm -rf $mentii_repo_dir
-
-if ! git clone https://github.com/mentii/mentii.git
-then
-    error_msg="Failed to clone the mentii repository"
-    date=`TZ="America/New_York" date`
-    echo >&2 $error_msg
-    if $slack_flag
-    then
-      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+## Handle any flags passed to the build script
+handleAnyFlags() {
+  for i in ${*:1}
+  do
+    if [ $i == "-h" ] ; then
+      printHelpToSTDOUT
+      exit 0
+    elif [ $i == "--no-deploy" ] ; then
+      deploy_flag='false'
+      echo "Not deploying to AWS post build."
+    elif [ $i == "--quiet" ] ; then
+      slack_flag='false'
+      echo "Not sending slack notifications."
+    elif [ $i == "--no-test" ] ; then
+      test_flag='false'
+      echo "Not running unit tests."
     fi
-    rm -f $buildScript_dir/buildIsInProgress.tmp
+  done
+}
+
+## Check if the given branch exists in the mentii repo
+exitIfMentiiBranchDoesntExist() {
+  repo_exists=`git ls-remote --heads https://github.com/mentii/mentii.git $gitBranch | wc -l`
+
+  if [ $repo_exists == '0' ]; then
+    echo >&2 "Given branch '$gitBranch' does not exist in the mentii repository."
+    unlockScript
+    exit 2
+  fi
+}
+
+## Clone fresh instance of the mentii repository
+cloneMentiiRepository () {
+  echo "CLONING MENTII REPO"
+  cd $git_repo_dir
+  rm -rf $mentii_repo_dir
+
+  if ! git clone https://github.com/mentii/mentii.git
+  then
+    updateCurrentDateEST
+    errorReason='Failed to clone the mentii repository.'
+    errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
+    echo >&2 "$errorReason"
+    sendSlackNotification $errorMessage
+    unlockScript
+    exit 3
+  fi
+}
+
+## Updates the current date and time variable
+updateCurrentDateEST() {
+  currentDateEST=`TZ="America/New_York" date`
+}
+
+## Sends a slack notification with given message
+sendSlackNotification() {
+  if [ "$slack_flag" = 'true' ]
+  then
+    /home/asp78/SD/slacknotify.sh $1
+  fi
+}
+
+## Checkout the given mentii repository branch
+## Also changes group permissions of repo and deletes .git and .gitignore
+checkoutGivenRepoBranch() {
+  echo "CHECKING OUT BRANCH '$gitBranch'"
+  cd $mentii_repo_dir
+
+  if ! git checkout $gitBranch
+  then
+    rm -rf $mentii_repo_dir
+    updateCurrentDateEST
+    errorReason="Failed to checkout branch '$gitBranch'."
+    errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
+    echo >&2 "$errorReason"
+    sendSlackNotification $errorMessage
+    unlockScript
     exit 4
-fi
+  fi
 
-## Checkout given branch
-echo "CHECKING OUT BRANCH '$1'"
-cd $mentii_repo_dir
+  # Get last commit for notifications
+  gitBranchLastCommit=`git log --pretty=format:'%h' -n 1`
 
-if ! git checkout $1
-then
+  # Change group permissions
+  chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
+
+  # Remove .git and .gitignore from repo
+  rm -rf $mentii_repo_dir/.git/ $mentii_repo_dir/.gitignore
+}
+
+## Compiles mentii project
+buildMentiiProject() {
+  echo "BUILDING PROJECT"
+  cd $mentii_repo_dir
+  if ! make compile
+  then
     rm -rf $mentii_repo_dir
-    error_msg="Failed to checkout branch '$1'"
-    date=`TZ="America/New_York" date`
-    echo >&2 $error_msg
-    if $slack_flag
-    then
-      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
-    fi
-    rm -f $buildScript_dir/buildIsInProgress.tmp
+    updateCurrentDateEST
+    errorReason='Failed to compile.'
+    errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
+    echo >&2 "$errorReason"
+    sendSlackNotification $errorMessage
+    unlockScript
     exit 5
-fi
+  fi
+}
 
-## Change group permissions to our group
-echo "CHANGING GROUP PERMISSIONS OF REPO"
-chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
-
-## Remove .git and .gitignore files
-echo "REMOVING .git AND .gitignore FILES"
-git_last=`git log --pretty=format:'%h' -n 1` # used in slack notification
-rm -rf $mentii_repo_dir/.git/ $mentii_repo_dir/.gitignore
-
-## Build
-echo "BUILDING PROJECT"
-if ! make compile
-then
-    rm -rf $mentii_repo_dir
-    error_msg="Failed to compile"
-    date=`TZ="America/New_York" date`
-    echo >&2 $error_msg
-    if $slack_flag
+## Runs unit tests
+## Kills the database xterm after they are done as well as deletes the virtual environment
+runUnitTests() {
+  if [ "$test_flag" = 'true' ]
+  then
+    echo "RUNNING TESTS"
+    cd $mentii_repo_dir
+    if ! make runtests-nocompile
     then
-      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
+      rm -rf $mentii_repo_dir
+      pkill -9 xterm
+      updateCurrentDateEST
+      errorReason='Failed to pass tests.'
+      errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
+      echo >&2 "$errorReason"
+      sendSlackNotification $errorMessage
+      unlockScript
+      exit 6
     fi
-    rm -f $buildScript_dir/buildIsInProgress.tmp
-    exit 6
-fi
 
-## Run unit tests
-echo "RUNNING TESTS"
-cd $mentii_repo_dir
-if ! make runtests-nocompile
-then
-    rm -rf $mentii_repo_dir
-    error_msg="Failed to pass tests"
-    date=`TZ="America/New_York" date`
-    echo >&2 $error_msg
-    if $slack_flag
-    then
-      /home/asp78/SD/slacknotify.sh "Build Failed at $date. Latest commit on $1: $git_last. Reason: $error_msg"
-    fi
-    rm -f $buildScript_dir/buildIsInProgress.tmp
+    ## Kill database xterm - super bad
+    pkill -9 xterm
+
+    ## Delete Virtual Environment
+    rm -rf $mentii_repo_dir/Backend/env
+  fi
+}
+
+## Removes unneed files from repo to save on space in tarball
+deleteUnusedFilesFromProject() {
+  echo "REMOVING UNUSED FILES FROM PROJECT"
+  cd $mentii_repo_dir
+  find . -name "*.js.map" -type f -delete
+  find . -name "*.ts" -type f -delete
+}
+
+## Tars the project up and moves it
+tarProjectUpAndMove() {
+  echo "TARING UP AND MOVING PROJECT TO BUILDS DIRECTORY"
+  cd $git_repo_dir
+  tar -cf build.tar ./mentii
+
+  # Change group owner of tarball
+  chown -f :mentil_senior_proj_1617 ./build.tar
+
+  # Moves tarball to the builds directory
+  mv --backup=numbered ./build.tar $builds_dir/build.tar
+}
+
+## Deletes the repo and notifies team of completion
+finishBuild() {
+  # Deletes mentii repository
+  rm -rf $mentii_repo_dir
+
+  # Sends slack message saying build is done
+  message="Build Complete at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit"
+  updateCurrentDateEST
+  sendSlackNotification $message
+}
+
+## Starts a deploy if the flag is true
+triggerDeploy() {
+  if $deploy_flag
+  then
+    echo "Deploying to AWS server"
+    ssh aws /home/ec2-user/deploy.sh
+  fi
+}
+
+lockScriptOrQuit() {
+  if [ -f ./buildIsInProgress.tmp ] ; then
+    echo >&2 "Another person is running this right now, wait a sec."
     exit 7
-fi
+  else
+    touch ./buildIsInProgress.tmp
+    chown -f :mentil_senior_proj_1617 ./buildIsInProgress.tmp
+  fi
+}
 
-## Kill database xterm - super bad
-echo "KILLING THE DATABASE PROCESS"
-pkill -9 xterm
+unlockScript() {
+  rm -f $buildScript_dir/buildIsInProgress.tmp
+}
 
-## Delete Virtual Environment
-echo "REMOVING VIRTUAL ENVIRONMENT"
-rm -rf $mentii_repo_dir/Backend/env
+main () {
+  lockScriptOrQuit
+  exitIfNoArgumentsGiven $# $1
+  handleAnyFlags $*
+  exitIfMentiiBranchDoesntExist
+  cloneMentiiRepository
+  checkoutGivenRepoBranch
+  buildMentiiProject
+  runUnitTests
+  deleteUnusedFilesFromProject
+  tarProjectUpAndMove
+  finishBuild
+  triggerDeploy
+  unlockScript
 
-## Remove unused .ts and .js.map files from the project
-## to shave off some size
-echo "REMOVING UNUSED FILES FROM PROJECT"
-cd $mentii_repo_dir
-find . -name "*.js.map" -type f -delete
-find . -name "*.ts" -type f -delete
+  echo "\nDONE!"
+}
 
-## Tar it up and move it
-echo "TARING UP AND MOVING PROJECT TO BUILDS DIRECTORY"
-cd $git_repo_dir
-tar -cf build.tar ./mentii
-chown -f :mentil_senior_proj_1617 ./build.tar
-mv --backup=numbered ./build.tar $builds_dir/build.tar
-
-## Delete repository
-echo "DELETING THE MENTII REPOSITORY"
-rm -rf $mentii_repo_dir
-
-## Send slack notification
-echo "SENDING SLACK NOTIFICATION"
-date=`TZ="America/New_York" date`
-if $slack_flag
-then
-  /home/asp78/SD/slacknotify.sh "Build Complete at $date. Latest commit on $1: $git_last"
-fi
-
-## Deploy if deploy_flag is true
-if $deploy_flag
-then
-  echo "Deploying to AWS server"
-  ssh aws /home/ec2-user/deploy.sh
-fi
-
-## Remove tmp file so someone else can build
-rm -f $buildScript_dir/buildIsInProgress.tmp
-
-echo "DONE!"
+main $*
