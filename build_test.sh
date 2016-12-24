@@ -62,7 +62,7 @@ handleAnyFlags() {
     elif [ $i == "--quiet" ] ; then
       slack_flag='false'
       echo "Not sending slack notifications."
-    elif [ $i == "--no-tests" ] ; then
+    elif [ $i == "--no-test" ] ; then
       test_flag='false'
       echo "Not running unit tests."
     fi
