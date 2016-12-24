@@ -19,7 +19,7 @@ buildScript_dir="$git_repo_dir/BuildScript"
 gitBranch=''
 gitBranchLastCommit=''
 currentDateEST=''
-errorMessage=''
+username=''
 
 ## Checks if any arguments are passed into this script
 exitIfNoArgumentsGiven() {
@@ -73,7 +73,7 @@ handleAnyFlags() {
 
 ## Check if the given branch exists in the mentii repo
 exitIfMentiiBranchDoesntExist() {
-  repo_exists=`git ls-remote --heads https://github.com/mentii/mentii.git $gitBranch | wc -l`
+  local repo_exists=`git ls-remote --heads https://github.com/mentii/mentii.git $gitBranch | wc -l`
 
   if [ $repo_exists == '0' ]; then
     echo >&2 "Given branch '$gitBranch' does not exist in the mentii repository."
@@ -83,16 +83,23 @@ exitIfMentiiBranchDoesntExist() {
 }
 
 ## Clone fresh instance of the mentii repository
+## Also sends a slack notification that the build process has started
 cloneMentiiRepository () {
   echo "CLONING MENTII REPO"
   cd $git_repo_dir
   rm -rf $mentii_repo_dir
 
+  
+  setUserName
+  updateCurrentDateEST
+  local message="$username has started a build at $currentDateEST."
+  sendSlackNotification $message
+
   if ! git clone https://github.com/mentii/mentii.git
   then
     updateCurrentDateEST
-    errorReason='Failed to clone the mentii repository.'
-    errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
+    local errorReason='Failed to clone the mentii repository.'
+    local errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
     echo >&2 "$errorReason"
     sendSlackNotification $errorMessage
     unlockScript
@@ -123,8 +130,8 @@ checkoutGivenRepoBranch() {
   then
     rm -rf $mentii_repo_dir
     updateCurrentDateEST
-    errorReason="Failed to checkout branch '$gitBranch'."
-    errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
+    local errorReason="Failed to checkout branch '$gitBranch'."
+    local errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
     echo >&2 "$errorReason"
     sendSlackNotification $errorMessage
     unlockScript
@@ -149,8 +156,8 @@ buildMentiiProject() {
   then
     rm -rf $mentii_repo_dir
     updateCurrentDateEST
-    errorReason='Failed to compile.'
-    errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
+    local errorReason='Failed to compile.'
+    local errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
     echo >&2 "$errorReason"
     sendSlackNotification $errorMessage
     unlockScript
@@ -170,8 +177,8 @@ runUnitTests() {
       rm -rf $mentii_repo_dir
       pkill -9 xterm
       updateCurrentDateEST
-      errorReason='Failed to pass tests.'
-      errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
+      local errorReason='Failed to pass tests.'
+      local errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
       echo >&2 "$errorReason"
       sendSlackNotification $errorMessage
       unlockScript
@@ -213,7 +220,7 @@ finishBuild() {
   rm -rf $mentii_repo_dir
 
   # Sends slack message saying build is done
-  message="Build Complete at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit"
+  local message="Build Complete at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit"
   updateCurrentDateEST
   sendSlackNotification $message
 }
@@ -239,6 +246,28 @@ lockScriptOrQuit() {
 
 unlockScript() {
   rm -f $buildScript_dir/buildIsInProgress.tmp
+}
+
+setUserName() {
+  local user=$USER
+  if [ "$user" = 'asp78' ]
+  then
+    username='Alex, Master of the DevOps,'
+  elif [ "$user" = 'ams665' ]
+  then
+    username='Aaron, The Wise Old Man,'
+  elif [ "$user" = 'smc395' ]
+  then
+    username='Micah, The Faithful Companion,'
+  elif [ "$user" = 'jtm333' ]
+  then
+    username='Jon, The Lord of Flames,'
+  elif [ "$user" = 'rdy29' ]
+  then
+    username='Ryan, The Emperor of Robotics,'
+  else
+    username='Someone, I have no idea who,'
+  fi
 }
 
 main () {
