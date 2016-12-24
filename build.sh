@@ -44,6 +44,7 @@ printHelpToSTDOUT() {
   echo "Here are the allowed flags:"
   echo "-h            Displays this gorgeous help screen"
   echo "--no-deploy   Does not automatically deploy the tarball post build"
+  echo "--no-test     Does not run unit tests USE WISELY"
   echo "--quiet       Does not send slack notifications on success OR failure"
   echo ""
   echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
