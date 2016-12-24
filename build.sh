@@ -115,7 +115,7 @@ updateCurrentDateEST() {
 sendSlackNotification() {
   if [ "$slack_flag" = 'true' ]
   then
-    /home/asp78/SD/slacknotify.sh $*
+    /home/asp78/SD/slacknotify.sh "$*"
   fi
 }
 
