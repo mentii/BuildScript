@@ -1,11 +1,12 @@
 #!/bin/bash
 
+## Locations
 home_dir='/home/ec2-user'
 mentii_repo_dir="$home_dir/mentii"
 builds_dir="$home_dir/builds"
 build_scripts_dir="$home_dir/BuildScripts"
 
-#wget the tar file from the build server
+# Wget the tar file from the build server
 echo "GETTING THE TAR FILE FROM TUX"
 cd $builds_dir
 if ! wget --no-verbose -O new.build.tar https://cs.drexel.edu/~asp78/builds/build.tar
@@ -18,25 +19,24 @@ then
 fi
 mv --backup=numbered new.build.tar build.tar
 
-#remove the current mentii directory
+# Remove the current mentii directory
 echo "DELETING THE CURRENT MENTII REPOISTORY"
 rm -rf $mentii_repo_dir
 
-#Delete Current DBs and recreate tables
+# Delete Current DBs table and recreate them fresh
 echo "DELETING THE DB TABLES"
 $build_scripts_dir/DB/deleteAllDbTables.py
 sleep 3 # needed for sync time to amazon
+
 echo "CREATING DB TABLES"
 $build_scripts_dir/DB/createUsersTable.py
 
-exit 0
-
-#untar the tar from the build server
+# Untar the tar from the build server
 echo "UNTARING THE FILE"
 cd $home_dir
 tar -xf $builds_dir/build.tar
 
-#Make deploy
+# Make deploy
 echo "DEPLOYING THE APPLICATION"
 cd $mentii_repo_dir
 if ! make deploy
@@ -48,7 +48,7 @@ then
     exit 2
 fi
 
-#Restart the server
+# Restart the server
 echo "RESTARTING THE SERVER"
 if ! sudo service httpd restart
 then
@@ -59,7 +59,7 @@ then
     exit 3
 fi
 
-#Notify slack that the 
+# Notify slack that the 
 echo "SENDING SLACK NOTIFICATION"
 date=`TZ="America/New_York" date`
 /home/ec2-user/slackNotify.sh "Deploy Complete at $date."
