@@ -3,6 +3,7 @@
 home_dir='/home/ec2-user'
 mentii_repo_dir="$home_dir/mentii"
 builds_dir="$home_dir/builds"
+build_scripts_dir="$home_dir/BuildScripts"
 
 #wget the tar file from the build server
 echo "GETTING THE TAR FILE FROM TUX"
@@ -20,6 +21,10 @@ mv --backup=numbered new.build.tar build.tar
 #remove the current mentii directory
 echo "DELETING THE CURRENT MENTII REPOISTORY"
 rm -rf $mentii_repo_dir
+
+#Delete Current DBs and recreate tables
+./$build_scripts_dir/DB/deleteAllDbTables.py
+./$build_scripts_dir/DB/createUsersTable.py
 
 #untar the tar from the build server
 echo "UNTARING THE FILE"
