@@ -59,7 +59,7 @@ then
     exit 3
 fi
 
-# Notify slack that the 
+# Notify slack that the deploy has finished
 echo "SENDING SLACK NOTIFICATION"
 date=`TZ="America/New_York" date`
 /home/ec2-user/slackNotify.sh "Deploy Complete at $date."
