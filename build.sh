@@ -219,8 +219,8 @@ finishBuild() {
   rm -rf $mentii_repo_dir
 
   # Sends slack message saying build is done
-  local message="Build Complete at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit"
   updateCurrentDateEST
+  local message="Build Complete at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit"
   sendSlackNotification $message
 }
 
