@@ -26,4 +26,4 @@ table = dynamodb.create_table(
     }
 )
 
-print("Table status:", table.table_status)
+print("Users Table:", table.table_status)

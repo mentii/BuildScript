@@ -23,8 +23,13 @@ echo "DELETING THE CURRENT MENTII REPOISTORY"
 rm -rf $mentii_repo_dir
 
 #Delete Current DBs and recreate tables
-./$build_scripts_dir/DB/deleteAllDbTables.py
-./$build_scripts_dir/DB/createUsersTable.py
+echo "DELETING THE DB TABLES"
+$build_scripts_dir/DB/deleteAllDbTables.py
+sleep 3 # needed for sync time to amazon
+echo "CREATING DB TABLES"
+$build_scripts_dir/DB/createUsersTable.py
+
+exit 0
 
 #untar the tar from the build server
 echo "UNTARING THE FILE"
