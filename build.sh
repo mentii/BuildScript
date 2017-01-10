@@ -142,9 +142,6 @@ checkoutGivenRepoBranch() {
 
   # Change group permissions
   chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
-
-  # Remove .git and .gitignore from repo
-  rm -rf $mentii_repo_dir/.git/ $mentii_repo_dir/.gitignore
 }
 
 ## Compiles mentii project
@@ -192,12 +189,39 @@ runUnitTests() {
   fi
 }
 
-## Removes unneed files from repo to save on space in tarball
+## Changes node_modules to include only what is needed to run
+getMinimumProductionCode() {
+  echo "REDUCING TO MINIMUM PRODUCTION CODE"
+  cd $mentii_repo_dir/Frontend
+  make clean
+
+  # Remove testing
+  rm -rf $mentii_repo_dir/Frontend/karma.conf.js
+  rm -rf $mentii_repo_dir/Frontend/karma-test-shim.js
+  rm -rf $mentii_repo_dir/Frontend/testing/
+
+  if ! make compile-prod
+  then
+    rm -rf $mentii_repo_dir
+    updateCurrentDateEST
+    local errorReason='Failed to compile-prod.'
+    local errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
+    echo >&2 "$errorReason"
+    sendSlackNotification $errorMessage
+    unlockScript
+    exit 7
+  fi
+}
+
+## Removes unneeded files from repo to save on space in tarball
 deleteUnusedFilesFromProject() {
   echo "REMOVING UNUSED FILES FROM PROJECT"
   cd $mentii_repo_dir
   find . -name "*.js.map" -type f -delete
   find . -name "*.ts" -type f -delete
+
+  # Remove .git and .gitignore from repo
+  rm -rf $mentii_repo_dir/.git/ $mentii_repo_dir/.gitignore
 }
 
 ## Tars the project up and moves it
@@ -278,6 +302,7 @@ main () {
   checkoutGivenRepoBranch
   buildMentiiProject
   runUnitTests
+  getMinimumProductionCode
   deleteUnusedFilesFromProject
   tarProjectUpAndMove
   finishBuild
