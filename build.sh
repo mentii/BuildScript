@@ -194,6 +194,12 @@ getMinimumProductionCode() {
   echo "REDUCING TO MINIMUM PRODUCTION CODE"
   cd $mentii_repo_dir/Frontend
   make clean
+
+  # Remove testing
+  rm -rf $mentii_repo_dir/Frontend/karma.conf.js
+  rm -rf $mentii_repo_dir/Frontend/karma-test-shim.js
+  rm -rf $mentii_repo_dir/Frontend/testing/
+
   if ! make compile-prod
   then
     rm -rf $mentii_repo_dir
