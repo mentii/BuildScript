@@ -26,7 +26,7 @@ rm -rf $mentii_repo_dir
 # Delete Current DBs table and recreate them fresh
 echo "DELETING THE DB TABLES"
 $build_scripts_dir/DB/deleteAllDbTables.py
-sleep 3 # needed for sync time to amazon
+sleep 6 # needed for sync time to amazon
 
 echo "CREATING DB TABLES"
 $build_scripts_dir/DB/createUsersTable.py

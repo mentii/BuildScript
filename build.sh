@@ -191,6 +191,7 @@ runUnitTests() {
 
 ## Changes node_modules to include only what is needed to run
 getMinimumProductionCode() {
+  echo "REDUCING TO MINIMUM PRODUCTION CODE"
   cd $mentii_repo_dir/Frontend
   make clean
   if ! make compile-prod
