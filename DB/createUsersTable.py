@@ -5,8 +5,8 @@ import boto3
 
 dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
-
-table = dynamodb.create_table(
+## USERS Table
+usersTable = dynamodb.create_table(
     TableName='users',
     KeySchema=[
         {
@@ -26,4 +26,27 @@ table = dynamodb.create_table(
     }
 )
 
-print("Users Table:", table.table_status)
+print("Users Table:", usersTable.table_status)
+
+## Classes Table
+classesTable = dynamodb.create_table(
+    TableName='classes',
+    KeySchema=[
+        {
+            'AttributeName': 'code',
+            'KeyType': 'HASH'  #Partition key
+        }
+    ],
+    AttributeDefinitions=[
+        {
+            'AttributeName': 'code',
+            'AttributeType': 'S'
+        }
+    ],
+    ProvisionedThroughput={
+        'ReadCapacityUnits': 1,
+        'WriteCapacityUnits': 1
+    }
+)
+
+print("Classes Table:", classesTable.table_status)
