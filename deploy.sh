@@ -29,7 +29,7 @@ $build_scripts_dir/DB/deleteAllDbTables.py
 sleep 6 # needed for sync time to amazon
 
 echo "CREATING DB TABLES"
-$build_scripts_dir/DB/createUsersTable.py
+$build_scripts_dir/DB/createAllDbTables.py
 
 # Untar the tar from the build server
 echo "UNTARING THE FILE"
