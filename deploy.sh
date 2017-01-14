@@ -137,7 +137,6 @@ restartServer() {
 
 # Notify slack that the deploy has finished
 notifyComplete() {
-  echo "SENDING SLACK NOTIFICATION"
   updateCurrentDateEST
   sendSlackNotification "Deploy Complete at $currentDateEST."
 }

@@ -92,7 +92,7 @@ exitIfMentiiBranchDoesntExist() {
 ## Clone fresh instance of the mentii repository
 ## Also sends a slack notification that the build process has started
 cloneMentiiRepository () {
-  echo "CLONING MENTII REPO"
+  echo "CLONING MENTII REPO ON BRANCH '$gitBranch'"
   cd $git_repo_dir
   rm -rf $mentii_repo_dir
 
@@ -101,7 +101,7 @@ cloneMentiiRepository () {
   local message="$username has started a build at $currentDateEST for branch '$gitBranch'."
   sendSlackNotification $message
 
-  if ! git clone https://github.com/mentii/mentii.git
+  if ! git clone -b $gitBranch https://github.com/mentii/mentii.git
   then
     updateCurrentDateEST
     local errorReason='Failed to clone the mentii repository.'
@@ -111,6 +111,13 @@ cloneMentiiRepository () {
     unlockScript
     exit 3
   fi
+
+  # Get last commit for notifications
+  cd $mentii_repo_dir
+  gitBranchLastCommit=`git log --pretty=format:'%h' -n 1`
+
+  # Change group permissions
+  chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
 }
 
 ## Updates the current date and time variable
@@ -124,31 +131,6 @@ sendSlackNotification() {
   then
     /home/asp78/SD/slacknotify.sh "$*"
   fi
-}
-
-## Checkout the given mentii repository branch
-## Also changes group permissions of repo and deletes .git and .gitignore
-checkoutGivenRepoBranch() {
-  echo "CHECKING OUT BRANCH '$gitBranch'"
-  cd $mentii_repo_dir
-
-  if ! git checkout $gitBranch
-  then
-    rm -rf $mentii_repo_dir
-    updateCurrentDateEST
-    local errorReason="Failed to checkout branch '$gitBranch'."
-    local errorMessage="Build Failed at $currentDateEST. Reason: $errorReason"
-    echo >&2 "$errorReason"
-    sendSlackNotification $errorMessage
-    unlockScript
-    exit 4
-  fi
-
-  # Get last commit for notifications
-  gitBranchLastCommit=`git log --pretty=format:'%h' -n 1`
-
-  # Change group permissions
-  chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
 }
 
 ## Compiles mentii project for testing (includes devDependencies)
@@ -309,7 +291,6 @@ main () {
   handleAnyFlags $*
   exitIfMentiiBranchDoesntExist
   cloneMentiiRepository
-  checkoutGivenRepoBranch
   runUnitTests
   buildProductionMentiiProject
   deleteUnusedFilesFromProject
