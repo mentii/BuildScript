@@ -145,7 +145,7 @@ notifyComplete() {
 sendSlackNotification() {
   if [ "$slack_flag" = 'true' ]
   then
-    /home/asp78/SD/slacknotify.sh "$*"
+    /home/ec2-user/slackNotify.sh "$*"
   fi
 }
 
