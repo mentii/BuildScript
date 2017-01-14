@@ -8,6 +8,7 @@
 deploy_flag='true'
 slack_flag='true'
 test_flag='true'
+database_flag='true'
 
 ## Locations
 git_repo_dir='/home/asp78/git'
@@ -20,6 +21,7 @@ gitBranch=''
 gitBranchLastCommit=''
 currentDateEST=''
 username=''
+flagsGiven=''
 
 ## Checks if any arguments are passed into this script
 exitIfNoArgumentsGiven() {
@@ -42,16 +44,18 @@ printHelpToSTDOUT() {
   echo "and YES the flags must come after the BRANCH_NAME. This ain't some fancy script."
   echo ""
   echo "Here are the allowed flags:"
-  echo "-h            Displays this gorgeous help screen"
-  echo "--no-deploy   Does not automatically deploy the tarball post build"
-  echo "--no-test     Does not run unit tests USE WISELY"
-  echo "--quiet       Does not send slack notifications on success OR failure"
+  echo "-h              Displays this gorgeous help screen"
+  echo "--no-deploy     Does not automatically deploy the tarball post build"
+  echo "--no-test       Does not run unit tests USE WISELY"
+  echo "--quiet         Does not send slack notifications on success OR failure"
+  echo "--no-database   Does not wipe the database on deploy"
   echo ""
   echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
 }
 
 ## Handle any flags passed to the build script
 handleAnyFlags() {
+  flagsGiven=$*
   for i in ${*:1}
   do
     if [ $i == "-h" ] ; then
@@ -67,6 +71,9 @@ handleAnyFlags() {
     elif [ $i == "--no-test" ] ; then
       test_flag='false'
       echo "Not running unit tests."
+    elif [ $i == "--no-database" ] ; then
+      database_flag='false'
+      echo "Not wiping and recreating database tables."
     fi
   done
 }
@@ -144,9 +151,9 @@ checkoutGivenRepoBranch() {
   chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
 }
 
-## Compiles mentii project
-buildMentiiProject() {
-  echo "BUILDING PROJECT"
+## Compiles mentii project for testing (includes devDependencies)
+buildMentiiProjectForTesting() {
+  echo "BUILDING PROJECT FOR TESTING"
   cd $mentii_repo_dir
   if ! make compile
   then
@@ -166,6 +173,7 @@ buildMentiiProject() {
 runUnitTests() {
   if [ "$test_flag" = 'true' ]
   then
+    buildMentiiProjectForTesting
     echo "RUNNING TESTS"
     cd $mentii_repo_dir
     if ! make runtests-nocompile
@@ -189,9 +197,9 @@ runUnitTests() {
   fi
 }
 
-## Changes node_modules to include only what is needed to run
-getMinimumProductionCode() {
-  echo "REDUCING TO MINIMUM PRODUCTION CODE"
+## Compiles mentii project without devDependencies
+buildProductionMentiiProject() {
+  echo "BUILDING PRODUCTION CODE"
   cd $mentii_repo_dir/Frontend
   make clean
 
@@ -253,17 +261,19 @@ triggerDeploy() {
   if $deploy_flag
   then
     echo "Deploying to AWS server"
-    ssh aws /home/ec2-user/deploy.sh
+    ssh aws "/home/ec2-user/deploy.sh $flagsGiven"
   fi
 }
 
 lockScriptOrQuit() {
-  if [ -f ./buildIsInProgress.tmp ] ; then
+  if [ -f $buildScript_dir/buildIsInProgress.tmp ] ; then
     echo >&2 "Another person is running this right now, wait a sec."
     exit 7
   else
+    cd $buildScript_dir
     touch ./buildIsInProgress.tmp
     chown -f :mentil_senior_proj_1617 ./buildIsInProgress.tmp
+    cd -
   fi
 }
 
@@ -300,9 +310,8 @@ main () {
   exitIfMentiiBranchDoesntExist
   cloneMentiiRepository
   checkoutGivenRepoBranch
-  buildMentiiProject
   runUnitTests
-  getMinimumProductionCode
+  buildProductionMentiiProject
   deleteUnusedFilesFromProject
   tarProjectUpAndMove
   finishBuild
