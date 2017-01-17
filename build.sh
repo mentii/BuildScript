@@ -182,8 +182,11 @@ runUnitTests() {
 ## Compiles mentii project without devDependencies
 buildProductionMentiiProject() {
   echo "BUILDING PRODUCTION CODE"
-  cd $mentii_repo_dir/Frontend
+
+  # Clean repo, removes devDependencies
+  cd $mentii_repo_dir
   make clean
+  cd $mentii_repo_dir/Frontend
 
   # Remove testing
   rm -rf $mentii_repo_dir/Frontend/karma.conf.js
