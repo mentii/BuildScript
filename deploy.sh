@@ -97,6 +97,20 @@ recreateDatabase() {
     sendSlackNotification $errorMessage
     exit 3
   fi
+
+  ## TODO: Find a better way to find out when tables are finished being removed
+  sleep 6 # needed for sync time to amazon
+
+  echo "POPULATING  DB TABLES"
+  if ! $build_scripts_dir/DB/setupInitialData.py
+  then
+    updateCurrentDateEST
+    local errorReason="Failed to populate the database tables"
+    local errorMessage="Deploy Failed at $currentDateEST. Reason: $errorReason"
+    echo >&2 $errorMessage
+    sendSlackNotification $errorMessage
+    exit 3
+  fi
 }
 
 # Untar the new application
