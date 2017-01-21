@@ -9,6 +9,7 @@ deploy_flag='true'
 slack_flag='true'
 test_flag='true'
 database_flag='true'
+sampleData_flag='false'
 
 ## Locations
 git_repo_dir='/home/asp78/git'
@@ -74,6 +75,9 @@ handleAnyFlags() {
     elif [ $i == "--no-database" ] ; then
       database_flag='false'
       echo "Not wiping and recreating database tables."
+    elif [ $i == "--sample-data" ] ; then
+      sampleData_flag='true'
+      echo "Adding sample data."
     fi
   done
 }

@@ -6,6 +6,7 @@
 ## Script flags
 slack_flag='true'
 database_flag='true'
+sampleData_flag='false'
 
 ## Locations
 home_dir='/home/ec2-user'
@@ -43,6 +44,9 @@ handleAnyFlags() {
     elif [ $i == "--no-database" ] ; then
       database_flag='false'
       echo "Not wiping and recreating database tables."
+    elif [ $i == "--sample-data" ] ; then
+      sampleData_flag='true'
+      echo "Adding sample data."
     fi
   done
 }
@@ -103,7 +107,18 @@ recreateDatabase() {
     local errorMessage="Deploy Failed at $currentDateEST. Reason: $errorReason"
     echo >&2 $errorMessage
     sendSlackNotification $errorMessage
-    exit 3
+    exit 4
+  fi
+
+  echo "ADDING SAMPLE DATA"
+  if ["$sampleData_flag" = 'true'] && ! $build_scripts_dir/DB/addSampleData.py
+  then
+    updateCurrentDateEST
+    local errorReason="Failed to add sample data"
+    local errorMessage="Deploy Failed at $currentDateEST. Reason: $errorReason"
+    echo >&2 $errorMessage
+    sendSlackNotification $errorMessage
+    exit 5
   fi
 }
 
@@ -125,7 +140,7 @@ deployMentii() {
     local errorMessage="Deploy Failed at $currentDateEST. Reason: $errorReason"
     echo >&2 $errorMessage
     sendSlackNotification $errorMessage
-    exit 4
+    exit 6
   fi
 }
 
@@ -139,7 +154,7 @@ restartServer() {
     local errorMessage="Deploy Failed at $currentDateEST. Reason: $errorReason"
     echo >&2 $errorMessage
     sendSlackNotification $errorMessage
-    exit 5
+    exit 7
   fi
 }
 
