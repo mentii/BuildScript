@@ -111,7 +111,7 @@ recreateDatabase() {
   fi
 
   echo "ADDING SAMPLE DATA"
-  if ["$sampleData_flag" = 'true'] && ! $build_scripts_dir/DB/addSampleData.py
+  if [ "$sampleData_flag" = 'true' ] && ! $build_scripts_dir/DB/addSampleData.py
   then
     updateCurrentDateEST
     local errorReason="Failed to add sample data"

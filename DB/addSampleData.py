@@ -7,6 +7,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 client = boto3.client('dynamodb')
 
 ## Add a few classes, and a user who's enrolled in some
+usersTable = dynamodb.Table('users')
 classesTable = dynamodb.Table('classes')
 
 classesTable.put_item(
