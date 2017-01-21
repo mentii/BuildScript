@@ -14,3 +14,8 @@ for i in tableNames:
   table = dynamodb.Table(i)
 
   table.delete()
+
+# Don't exit this script until all tables are deleted
+for i in tableNames:
+  table = dynamodb.Table(i)
+  table.wait_until_not_exists()

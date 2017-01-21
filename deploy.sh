@@ -84,9 +84,6 @@ recreateDatabase() {
     exit 2
   fi
 
-  ## TODO: Find a better way to find out when tables are finished being removed
-  sleep 6 # needed for sync time to amazon
-
   echo "CREATING DB TABLES"
   if ! $build_scripts_dir/DB/createAllDbTables.py
   then
@@ -97,9 +94,6 @@ recreateDatabase() {
     sendSlackNotification $errorMessage
     exit 3
   fi
-
-  ## TODO: Find a better way to find out when tables are finished being removed
-  sleep 6 # needed for sync time to amazon
 
   echo "POPULATING  DB TABLES"
   if ! $build_scripts_dir/DB/setupInitialData.py

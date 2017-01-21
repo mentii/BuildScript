@@ -26,8 +26,6 @@ usersTable = dynamodb.create_table(
     }
 )
 
-print("Users Table:", usersTable.table_status)
-
 ## Classes Table
 classesTable = dynamodb.create_table(
     TableName='classes',
@@ -49,4 +47,14 @@ classesTable = dynamodb.create_table(
     }
 )
 
-print("Classes Table:", classesTable.table_status)
+if (usersTable.wait_until_exists()):
+  print('Failed to create users table', file=sys.stderr)
+  sys.exit(1)
+else:
+  print('Users table created.')
+
+if (classesTable.wait_until_exists()):
+  print('Failed to create classes table', file=sys.stderr)
+  sys.exit(1)
+else:
+  print('Classes table created.')
