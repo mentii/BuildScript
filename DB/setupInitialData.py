@@ -15,6 +15,7 @@ usersTable.put_item(
     'password': '31ee27e64277669ba3f90e9cb0630884',
     'activationId': '8411262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
+    'userRole': 'admin',
     'classCodes': []
   }
 )
