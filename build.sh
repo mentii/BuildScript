@@ -178,8 +178,9 @@ runUnitTests() {
     ## Kill database xterm - super bad
     pkill -9 xterm
 
-    ## Delete Virtual Environment
+    ## Delete Virtual Environments
     rm -rf $mentii_repo_dir/Backend/env
+    rm -rf $git_repo_dir/LocalDB/env
   fi
 }
 
