@@ -44,6 +44,7 @@ usersTable.put_item(
     'password': '5f4dcc3b5aa765d61d8327deb882cf99',
     'activationId': '1231262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
+    'userRole': 'student',
     'classCodes': ['d26713cc-f02d-4fd6-80f0-026784d1ab9b', 'd93cd63f-6eda-4644-b603-60f51142749e']
   }
 )
