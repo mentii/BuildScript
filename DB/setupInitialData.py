@@ -16,6 +16,5 @@ usersTable.put_item(
     'activationId': '8411262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
     'userRole': 'admin',
-    'classCodes': []
   }
 )
