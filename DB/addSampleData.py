@@ -37,8 +37,6 @@ classesTable.put_item(
   }
 )
 
-classcode = "93211750-a753-41cc-b8dc-904d6ed2f931"
-codeset = set([classcode])
 classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b', 'd93cd63f-6eda-4644-b603-60f51142749e'])
 
 usersTable.put_item(
@@ -48,7 +46,21 @@ usersTable.put_item(
     'activationId': '1231262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
     'userRole': 'student',
+    'classCodes': classCodes
+  }
+)
+
+classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
+teachingCodes = set(['93211750-a753-41cc-b8dc-904d6ed2f931'])
+
+usersTable.put_item(
+  Item={
+    'email': 'sampleUser2@mentii.me',
+    'password': '5f4dcc3b5aa765d61d8327deb882cf99',
+    'activationId': '1234262d-a5e0-40f5-8397-47d2daa7182f',
+    'active': 'T',
+    'userRole': 'teacher',
     'classCodes': classCodes,
-    'teaching': codeset
+    'teaching': teachingCodes
   }
 )
