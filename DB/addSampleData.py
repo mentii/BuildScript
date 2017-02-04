@@ -24,7 +24,7 @@ classesTable.put_item(
   Item={
     "title": "Biology 121",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.",
-    "code": "d93cd63f-6eda-4644-b603-60f51142749e"
+    "code": "d93cd63f-6eda-4644-b603-60f51142749e",
     'section': '002'
   }
 )
@@ -33,8 +33,8 @@ classesTable.put_item(
   Item={
     "title": "Business Accounting",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.",
-    "code": "93211750-a753-41cc-b8dc-904d6ed2f931"
-    'department': 'School of Business',
+    "code": "93211750-a753-41cc-b8dc-904d6ed2f931",
+    'department': 'School of Business'
   }
 )
 
