@@ -166,6 +166,8 @@ runUnitTests() {
     then
       rm -rf $mentii_repo_dir
       pkill -9 xterm
+      rm -rf $mentii_repo_dir/Backend/env
+      rm -rf $git_repo_dir/LocalDB/env
       updateCurrentDateEST
       local errorReason='Failed to pass tests.'
       local errorMessage="Build Failed at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit. Reason: $errorReason"
