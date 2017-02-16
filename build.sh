@@ -10,6 +10,7 @@ slack_flag='true'
 test_flag='true'
 database_flag='true'
 sampleData_flag='false'
+prod_flag='false'
 
 ## Locations
 git_repo_dir='/home/asp78/git'
@@ -50,6 +51,7 @@ printHelpToSTDOUT() {
   echo "--no-test       Does not run unit tests USE WISELY"
   echo "--quiet         Does not send slack notifications on success OR failure"
   echo "--no-database   Does not wipe the database on deploy"
+  echo "--prod          Deploys to prod"
   echo ""
   echo "If stuff seems broken, message Alex. If he is dead, message Ryan."
 }
@@ -78,6 +80,9 @@ handleAnyFlags() {
     elif [ $i == "--sample-data" ] ; then
       sampleData_flag='true'
       echo "Adding sample data."
+    elif [ $i == "--prod" ] ; then
+      prod_flag='true'
+      echo "Deploying to prod."
     fi
   done
 }
@@ -252,8 +257,14 @@ finishBuild() {
 triggerDeploy() {
   if $deploy_flag
   then
-    echo "Deploying to AWS server"
-    ssh aws "/home/ec2-user/deploy.sh $flagsGiven"
+    if $prod_flag
+    then
+      echo "Deploying to AWS prod server"
+      ssh aws "/home/ec2-user/deploy.sh $flagsGiven"
+    else
+      echo "Deploying to AWS staging server"
+      ssh aws-staging "/home/ec2-user/deploy.sh $flagsGiven"
+    fi
   fi
 }
 
