@@ -10,7 +10,7 @@ client = boto3.client('dynamodb')
 usersTable = dynamodb.Table('users')
 classesTable = dynamodb.Table('classes')
 
-activitieLists = [
+activitiesList = [
     {'title':'Week 1'},
     {
         'title':'Week 2',
@@ -22,7 +22,7 @@ activitieLists = [
         'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)'
     }]
 
-studentList = ['student@mentii.me']
+studentSet = set(['student@mentii.me'])
 
 classesTable.put_item(
   Item={
@@ -32,7 +32,7 @@ classesTable.put_item(
     'department': 'School of Math',
     'section': '001',
     'activities': activitiesList,
-    'studentList': studentList
+    'students': studentSet
   }
 )
 
@@ -67,8 +67,8 @@ usersTable.put_item(
   }
 )
 
-classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
-teachingCodes = set(['93211750-a753-41cc-b8dc-904d6ed2f931'])
+classCodes = set(['93211750-a753-41cc-b8dc-904d6ed2f931'])
+teachingCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 
 usersTable.put_item(
   Item={
