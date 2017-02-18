@@ -266,10 +266,10 @@ triggerDeploy() {
     if $prod_flag
     then
       echo "Deploying to AWS prod server"
-      ssh aws "/home/ec2-user/deploy.sh $flagsGiven"
+      ssh aws "/home/ec2-user/deploy.sh $tarballName $flagsGiven"
     else
       echo "Deploying to AWS staging server"
-      ssh aws-staging "/home/ec2-user/deploy.sh $flagsGiven"
+      ssh aws-staging "/home/ec2-user/deploy.sh $tarballName $flagsGiven"
     fi
   fi
 }
