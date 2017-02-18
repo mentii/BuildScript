@@ -128,7 +128,7 @@ cloneMentiiRepository () {
   gitBranchLastCommit=`git log --pretty=format:'%h' -n 1`
 
   # Get application version
-  applicationVersion=`grep "version" ~/git/mentii/Frontend/package.json | awk -F " " '{print $2}' | cut -d "\"" -f 2`
+  applicationVersion=`grep "version" /home/asp78/git/mentii/Frontend/package.json | awk -F " " '{print $2}' | cut -d "\"" -f 2`
 
   # Change group permissions
   chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
@@ -255,7 +255,7 @@ finishBuild() {
 
   # Sends slack message saying build is done
   updateCurrentDateEST
-  local message="Build Complete at $currentDateEST. Latest commit on $gitBranch: $gitBranchLastCommit"
+  local message="Build Complete at $currentDateEST. Version: $applicationVersion Latest commit on $gitBranch: $gitBranchLastCommit"
   sendSlackNotification $message
 }
 
