@@ -24,6 +24,8 @@ gitBranchLastCommit=''
 currentDateEST=''
 username=''
 flagsGiven=''
+applicationVersion=''
+tarballName=''
 
 ## Checks if any arguments are passed into this script
 exitIfNoArgumentsGiven() {
@@ -124,6 +126,9 @@ cloneMentiiRepository () {
   # Get last commit for notifications
   cd $mentii_repo_dir
   gitBranchLastCommit=`git log --pretty=format:'%h' -n 1`
+
+  # Get application version
+  applicationVersion=`grep "version" ~/git/mentii/Frontend/package.json | awk -F " " '{print $2}' | cut -d "\"" -f 2`
 
   # Change group permissions
   chown -Rf :mentil_senior_proj_1617 $mentii_repo_dir
@@ -233,13 +238,14 @@ deleteUnusedFilesFromProject() {
 tarProjectUpAndMove() {
   echo "TARING UP AND MOVING PROJECT TO BUILDS DIRECTORY"
   cd $git_repo_dir
-  tar -cf build.tar ./mentii
+  tarballName="build.tar.$applicationVersion"
+  tar -cf $tarballName ./mentii
 
   # Change group owner of tarball
-  chown -f :mentil_senior_proj_1617 ./build.tar
+  chown -f :mentil_senior_proj_1617 ./$tarballName
 
   # Moves tarball to the builds directory
-  mv --backup=numbered ./build.tar $builds_dir/build.tar
+  mv --backup=numbered ./$tarballName $builds_dir/$tarballName
 }
 
 ## Deletes the repo and notifies team of completion
@@ -260,10 +266,10 @@ triggerDeploy() {
     if $prod_flag
     then
       echo "Deploying to AWS prod server"
-      ssh aws "/home/ec2-user/deploy.sh $flagsGiven"
+      ssh aws "/home/ec2-user/deploy.sh $tarballName $flagsGiven"
     else
       echo "Deploying to AWS staging server"
-      ssh aws-staging "/home/ec2-user/deploy.sh $flagsGiven"
+      ssh aws-staging "/home/ec2-user/deploy.sh $tarballName $flagsGiven"
     fi
   fi
 }

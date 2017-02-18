@@ -16,6 +16,22 @@ build_scripts_dir="$home_dir/BuildScripts"
 
 ## Variables
 currentDateEST=''
+tarballName=''
+
+## Checks if any arguments are passed into this script
+exitIfNoArgumentsGiven() {
+  if [ $1 -eq 0 ]
+  then
+    updateCurrentDateEST
+    local errorReason="No tarball name given"
+    local errorMessage="Deploy Failed at $currentDateEST. Reason: $errorReason"
+    echo >&2 $errorMessage
+    sendSlackNotification $errorMessage
+    exit 1
+  else
+    tarballName=$2
+  fi
+}
 
 # Displays the help text in STDOUT
 printHelpToSTDOUT() {
@@ -55,7 +71,7 @@ handleAnyFlags() {
 getTarFileFromTux() {
   echo "GETTING THE TAR FILE FROM TUX"
   cd $builds_dir
-  if ! wget --no-verbose -O new.build.tar https://cs.drexel.edu/~asp78/builds/build.tar
+  if ! wget --no-verbose -O new.build.tar https://cs.drexel.edu/~asp78/builds/$tarballName
   then
     updateCurrentDateEST
     local errorReason="Failed to wget file"
@@ -66,7 +82,7 @@ getTarFileFromTux() {
   fi
 
   # Move old application tar to backups
-  mv --backup=numbered new.build.tar build.tar
+  mv --backup=numbered new.build.tar $tarballName
 }
 
 # Remove the current mentii directory
@@ -126,7 +142,7 @@ recreateDatabase() {
 untarMentii() {
   echo "UNTARING THE FILE"
   cd $home_dir
-  tar -xf $builds_dir/build.tar
+  tar -xf $builds_dir/$tarballName
 }
 
 # Deploys the new application
@@ -178,6 +194,7 @@ updateCurrentDateEST() {
 }
 
 main() {
+  exitIfNoArgumentsGiven $# $1
   handleAnyFlags $*
   getTarFileFromTux
   removeExistingApplication
