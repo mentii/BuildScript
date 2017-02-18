@@ -10,7 +10,7 @@ client = boto3.client('dynamodb')
 usersTable = dynamodb.Table('users')
 classesTable = dynamodb.Table('classes')
 
-activitiesSet = [
+activitieLists = [
     {'title':'Week 1'},
     {
         'title':'Week 2',
@@ -22,6 +22,8 @@ activitiesSet = [
         'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)'
     }]
 
+studentList = ['student@mentii.me']
+
 classesTable.put_item(
   Item={
     'title': 'Algebra I',
@@ -29,7 +31,8 @@ classesTable.put_item(
     'code': 'd26713cc-f02d-4fd6-80f0-026784d1ab9b',
     'department': 'School of Math',
     'section': '001',
-    'activities': activitiesSet
+    'activities': activitiesList,
+    'studentList': studentList
   }
 )
 
@@ -55,7 +58,7 @@ classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b', 'd93cd63f-6eda-4644-b6
 
 usersTable.put_item(
   Item={
-    'email': 'sampleUser1@mentii.me',
+    'email': 'student@mentii.me',
     'password': '5f4dcc3b5aa765d61d8327deb882cf99',
     'activationId': '1231262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
@@ -69,7 +72,7 @@ teachingCodes = set(['93211750-a753-41cc-b8dc-904d6ed2f931'])
 
 usersTable.put_item(
   Item={
-    'email': 'sampleUser2@mentii.me',
+    'email': 'teacher@mentii.me',
     'password': '5f4dcc3b5aa765d61d8327deb882cf99',
     'activationId': '1234262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',

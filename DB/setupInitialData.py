@@ -12,7 +12,7 @@ usersTable = dynamodb.Table('users')
 usersTable.put_item(
   Item={
     'email': 'admin@mentii.me',
-    'password': '7a973dd4217b888a2ab5660db6691a5d',
+    'password': '5f4dcc3b5aa765d61d8327deb882cf99',
     'activationId': '8411262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
     'userRole': 'admin'
