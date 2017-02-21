@@ -198,12 +198,12 @@ main() {
   handleAnyFlags $*
   getTarFileFromTux
   removeExistingApplication
+  untarMentii
+  deployMentii
   if [ "$database_flag" = 'true' ]
   then
     recreateDatabase
   fi
-  untarMentii
-  deployMentii
   restartServer
   notifyComplete
 }
