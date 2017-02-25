@@ -39,6 +39,18 @@ exitIfNoArgumentsGiven() {
   fi
 }
 
+# Checks if you done forgot to use the -X for ssh ya dummy
+exitIfNotXForwarded() {
+  local display=`echo $DISPLAY`
+  if [ -z $display ]
+  then
+    echo >&2 "Not using X Forwarding :("
+    unlockScript
+    exit 1
+  fi
+}
+
+
 ## Displays the help text in STDOUT
 printHelpToSTDOUT() {
   echo "To run the build script, make sure you are on TWINKLE with (-X) X11 forwarding and then:"
@@ -315,6 +327,7 @@ setUserName() {
 main () {
   lockScriptOrQuit
   exitIfNoArgumentsGiven $# $1
+  exitIfNotXForwarded
   handleAnyFlags $*
   exitIfMentiiBranchDoesntExist
   cloneMentiiRepository
