@@ -30,6 +30,8 @@ exitIfNoArgumentsGiven() {
     exit 1
   else
     tarballName=$2
+    rm -f $home_dir/.currentBranch
+    echo "$3" >> $home_dir/.currentBranch
   fi
 }
 
@@ -194,7 +196,7 @@ updateCurrentDateEST() {
 }
 
 main() {
-  exitIfNoArgumentsGiven $# $1
+  exitIfNoArgumentsGiven $# $1 $2
   handleAnyFlags $*
   getTarFileFromTux
   removeExistingApplication
