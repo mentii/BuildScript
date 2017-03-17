@@ -9,16 +9,18 @@ client = boto3.client('dynamodb')
 ## Add a few classes, and a user who's enrolled in some
 usersTable = dynamodb.Table('users')
 classesTable = dynamodb.Table('classes')
+booksTable = dynamodb.Table('books')
 
+## Add classes
 activitiesList = [
     {'title':'Week 1'},
     {
         'title':'Week 2',
-        'description':'These got fractions"'
+        'description':'Fractions"'
     },
     {
         'title':'Week 3',
-        'description':'These got roots',
+        'description':'Square roots',
         'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)'
     }]
 
@@ -56,6 +58,7 @@ classesTable.put_item(
 
 classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b', 'd93cd63f-6eda-4644-b603-60f51142749e'])
 
+## Add user
 usersTable.put_item(
   Item={
     'email': 'student@mentii.me',
@@ -79,5 +82,88 @@ usersTable.put_item(
     'userRole': 'teacher',
     'classCodes': classCodes,
     'teaching': teachingCodes
+  }
+)
+
+## Add sample book
+booksTable.put_item(
+  Item={
+    "bookId":"13382a2d-a5e0-42f5-8397-47d2bac7182f",
+    "title":"Foundations of Algebra I",
+    "description":"An introduction to algebra concepts",
+    "chapters": [
+      {
+        "title": "Chapter 1",
+        "sections" : [
+          {
+            "title": "Section 1",
+            "problems" : [
+              {
+                "problemString" : "8x-9=3"
+              },
+              {
+                "problemString" : "87x*7=11"
+              },
+              {
+                "problemString" : "5x/12=63"
+              }
+            ]
+          },
+          {
+            "title": "Section 2",
+            "problems" : [
+              {
+                "problemString" : "6x-2=1"
+              },
+              {
+                "problemString" : "4x+3=20"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Chapter 2",
+        "sections" : [
+          {
+            "title": "Section 1",
+            "problems" : [
+              {
+                "problemString" : "81x*11=123"
+              }
+            ]
+          },
+          {
+            "title": "Section 2",
+            "problems" : [
+              {
+                "problemString" : "8x-9x=7"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Chapter 3",
+        "sections" : [
+          {
+            "title": "Section 1",
+            "problems" : [
+              {
+                "problemString" : "6+9x=53"
+              }
+            ]
+          },
+          {
+            "title": "Section 2",
+            "problems" : [
+              {
+                "problemString" : "7+4x=77"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 )
