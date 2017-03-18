@@ -16,7 +16,7 @@ activitiesList = [
     {'title':'Week 1'},
     {
         'title':'Week 2',
-        'description':'Fractions"'
+        'description':'Fractions'
     },
     {
         'title':'Week 3',
@@ -40,18 +40,18 @@ classesTable.put_item(
 
 classesTable.put_item(
   Item={
-    "title": "Biology 121",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.",
-    "code": "d93cd63f-6eda-4644-b603-60f51142749e",
+    'title': 'Biology 121',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
+    'code': 'd93cd63f-6eda-4644-b603-60f51142749e',
     'section': '002'
   }
 )
 
 classesTable.put_item(
   Item={
-    "title": "Business Accounting",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.",
-    "code": "93211750-a753-41cc-b8dc-904d6ed2f931",
+    'title': 'Business Accounting',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
+    'code': '93211750-a753-41cc-b8dc-904d6ed2f931',
     'department': 'School of Business'
   }
 )
@@ -88,77 +88,77 @@ usersTable.put_item(
 ## Add sample book
 booksTable.put_item(
   Item={
-    "bookId":"13382a2d-a5e0-42f5-8397-47d2bac7182f",
-    "title":"Foundations of Algebra I",
-    "description":"An introduction to algebra concepts",
-    "chapters": [
+    'bookId':'13382a2d-a5e0-42f5-8397-47d2bac7182f',
+    'title':'Foundations of Algebra I',
+    'description':'An introduction to algebra concepts',
+    'chapters': [
       {
-        "title": "Chapter 1",
-        "sections" : [
+        'title': 'Chapter 1',
+        'sections' : [
           {
-            "title": "Section 1",
-            "problems" : [
+            'title': 'Section 1',
+            'problems' : [
               {
-                "problemString" : "8x-9=3"
+                'problemString' : '8x-9=3'
               },
               {
-                "problemString" : "87x*7=11"
+                'problemString' : '87x*7=11'
               },
               {
-                "problemString" : "5x/12=63"
+                'problemString' : '5x/12=63'
               }
             ]
           },
           {
-            "title": "Section 2",
-            "problems" : [
+            'title': 'Section 2',
+            'problems' : [
               {
-                "problemString" : "6x-2=1"
+                'problemString' : '6x-2=1'
               },
               {
-                "problemString" : "4x+3=20"
+                'problemString' : '4x+3=20'
               }
             ]
           }
         ]
       },
       {
-        "title": "Chapter 2",
-        "sections" : [
+        'title': 'Chapter 2',
+        'sections' : [
           {
-            "title": "Section 1",
-            "problems" : [
+            'title': 'Section 1',
+            'problems' : [
               {
-                "problemString" : "81x*11=123"
+                'problemString' : '81x*11=123'
               }
             ]
           },
           {
-            "title": "Section 2",
-            "problems" : [
+            'title': 'Section 2',
+            'problems' : [
               {
-                "problemString" : "8x-9x=7"
+                'problemString' : '8x-9x=7'
               }
             ]
           }
         ]
       },
       {
-        "title": "Chapter 3",
-        "sections" : [
+        'title': 'Chapter 3',
+        'sections' : [
           {
-            "title": "Section 1",
-            "problems" : [
+            'title': 'Section 1',
+            'problems' : [
               {
-                "problemString" : "6+9x=53"
+                'problemString' : '6+9x=53'
               }
             ]
           },
           {
-            "title": "Section 2",
-            "problems" : [
+            'title': 'Section 2',
+            'problems' : [
               {
-                "problemString" : "7+4x=77"
+                'problemString' : '7+4x=77'
               }
             ]
           }
