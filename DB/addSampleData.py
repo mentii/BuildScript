@@ -107,7 +107,7 @@ booksTable.put_item(
             'title': 'Section 1',
             'problems' : [
               {
-                'problemString' : '$a$var + $b = $c|0|+ - * /'
+                'problemString' : '$a$var + $b = $c|0|10|+ - * /'
               },
               {
                 'problemString' : '$b - $var $op $c = $a'
