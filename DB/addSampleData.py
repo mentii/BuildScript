@@ -40,7 +40,7 @@ classesTable.put_item(
     'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
     'code': 'd26713cc-f02d-4fd6-80f0-026784d1ab9b',
     'department': 'School of Math',
-    'section': '001',
+    'classSection': '001',
     'activities': activitiesList,
     'students': studentSet
   }
@@ -51,7 +51,7 @@ classesTable.put_item(
     'title': 'Biology 121',
     'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
     'code': 'd93cd63f-6eda-4644-b603-60f51142749e',
-    'section': '002'
+    'classSection': '002'
   }
 )
 
