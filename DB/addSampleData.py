@@ -13,10 +13,18 @@ booksTable = dynamodb.Table('books')
 
 ## Add classes
 activitiesList = [
-    {'title':'Week 1'},
+    {
+        'title':'Week 1', 
+        'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
+        'chapterTitle': 'Chapter 1', 
+        'sectionTitle': 'Section 2'
+    },
     {
         'title':'Week 2',
-        'description':'Fractions'
+        'description':'Fractions',
+        'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
+        'chapterTitle': 'Chapter 1', 
+        'sectionTitle': 'Section 2'
     },
     {
         'title':'Week 3',
