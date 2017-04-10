@@ -107,13 +107,13 @@ booksTable.put_item(
             'title': 'Section 1',
             'problems' : [
               {
-                'problemString' : '8x-9=3'
+                'problemString' : '$a$var + $b = $c|0|10|+ - * /'
               },
               {
-                'problemString' : '87x*7=11'
+                'problemString' : '$b - $var $op $c = $a'
               },
               {
-                'problemString' : '5x/12=63'
+                'problemString' : '$var $op $b = $c|-10|10|+ -'
               }
             ]
           },
@@ -121,10 +121,10 @@ booksTable.put_item(
             'title': 'Section 2',
             'problems' : [
               {
-                'problemString' : '6x-2=1'
+                'problemString' : '$a$var + $b = $c|0|10|+ - * /'
               },
               {
-                'problemString' : '4x+3=20'
+                'problemString' : '$var $op $b = $c|-10|10|+ -'
               }
             ]
           }
@@ -137,7 +137,7 @@ booksTable.put_item(
             'title': 'Section 1',
             'problems' : [
               {
-                'problemString' : '81x*11=123'
+                'problemString' : '$b - $var $op $c = $a'
               }
             ]
           },
