@@ -14,22 +14,23 @@ booksTable = dynamodb.Table('books')
 ## Add classes
 activitiesList = [
     {
-        'title':'Week 1', 
+        'title':'Basic Addition and Subtraction', 
+        'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
+        'chapterTitle': 'Chapter 1', 
+        'sectionTitle': 'Section 1'
+    },
+    {
+        'title':'Positive and Negative Numbers',
         'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
         'chapterTitle': 'Chapter 1', 
         'sectionTitle': 'Section 2'
     },
     {
-        'title':'Week 2',
-        'description':'Fractions',
+        'title':'Multiplication and Division',
+        'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)', 
         'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
         'chapterTitle': 'Chapter 1', 
-        'sectionTitle': 'Section 2'
-    },
-    {
-        'title':'Week 3',
-        'description':'Square roots',
-        'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)'
+        'sectionTitle': 'Section 3'
     }]
 
 studentSet = set(['student@mentii.me'])
@@ -107,13 +108,10 @@ booksTable.put_item(
             'title': 'Section 1',
             'problems' : [
               {
-                'problemString' : '8x-9=3'
+                'problemString' : '$var + $b $op $d = $c|0|10|+ -'
               },
               {
-                'problemString' : '87x*7=11'
-              },
-              {
-                'problemString' : '5x/12=63'
+                'problemString' : '$b - $var $op $c = 22|0|20|+ -'
               }
             ]
           },
@@ -121,13 +119,28 @@ booksTable.put_item(
             'title': 'Section 2',
             'problems' : [
               {
-                'problemString' : '6x-2=1'
+                'problemString' : '$var + $b $op $d = $c|-10|10|+ -'
               },
               {
-                'problemString' : '4x+3=20'
+                'problemString' : '$b - $a - $var $op $c = $d|-20|20|+ -'
+              }
+            ]
+          },
+          {
+            'title': 'Section 3',
+            'problems' : [
+              {
+                'problemString' : '$a$var + $b = $c|0|10|+ - * /'
+              },
+              {
+                'problemString' : '$var $op $b - $d = $c|-10|10|* /'
+              },
+              {
+                'problemString' : '$d = $c $op $a$var|-5|5|+ * /' 
               }
             ]
           }
+
         ]
       },
       {
@@ -137,7 +150,7 @@ booksTable.put_item(
             'title': 'Section 1',
             'problems' : [
               {
-                'problemString' : '81x*11=123'
+                'problemString' : '$b - $var $op $c = $a'
               }
             ]
           },
