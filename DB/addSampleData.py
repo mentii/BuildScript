@@ -136,7 +136,7 @@ booksTable.put_item(
                 'problemString' : '$var $op $b - $d = $c|-10|10|* /'
               },
               {
-                'problemString' : '$d$var = $c $op $a|-5|5|+ * /' 
+                'problemString' : '$a$var = $c $op $a|-5|5|+ * /' 
               }
             ]
           }
