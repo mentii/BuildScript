@@ -31,41 +31,32 @@ activitiesList = [
         'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
         'chapterTitle': 'Chapter 1', 
         'sectionTitle': 'Section 3'
-    }]
+    }, 
+    {
+        'title':'Advanced Problems',
+        'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)', 
+        'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
+        'chapterTitle': 'Chapter 1', 
+        'sectionTitle': 'Section 4'
+    } 
+    ]
 
 studentSet = set(['student@mentii.me'])
 
 classesTable.put_item(
   Item={
     'title': 'Algebra I',
-    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
+    'description': 'This class contains activities realted to solving algebra 1 problems. This includes: Solving for a variable involving manipulation of both positive and negative numbers, solving for a variable involving manipulation of numbers using multiplication and division, and more complex problems with these concepts.',
     'code': 'd26713cc-f02d-4fd6-80f0-026784d1ab9b',
-    'department': 'School of Math',
+    'department': 'Math',
     'classSection': '001',
     'activities': activitiesList,
     'students': studentSet
   }
 )
 
-classesTable.put_item(
-  Item={
-    'title': 'Biology 121',
-    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
-    'code': 'd93cd63f-6eda-4644-b603-60f51142749e',
-    'classSection': '002'
-  }
-)
 
-classesTable.put_item(
-  Item={
-    'title': 'Business Accounting',
-    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.',
-    'code': '93211750-a753-41cc-b8dc-904d6ed2f931',
-    'department': 'School of Business'
-  }
-)
-
-classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b', 'd93cd63f-6eda-4644-b603-60f51142749e'])
+classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 
 ## Add user
 usersTable.put_item(
@@ -79,7 +70,7 @@ usersTable.put_item(
   }
 )
 
-classCodes = set(['93211750-a753-41cc-b8dc-904d6ed2f931'])
+classCodes = set([])
 teachingCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 
 usersTable.put_item(
@@ -123,6 +114,9 @@ booksTable.put_item(
               },
               {
                 'problemString' : '$b - $a - $var $op $c = $d|-20|20|+ -'
+              },
+              {
+                'problemString' : '$a - ($var $op $c) = $d|-20|20|+ -'
               }
             ]
           },
@@ -137,6 +131,23 @@ booksTable.put_item(
               },
               {
                 'problemString' : '$a$var = $c $op $a|-5|5|+ * /' 
+              },
+              {
+                'problemString' : '$a($var - $b) = $c $op $a|-5|5|+ * /' 
+              }
+            ]
+          },
+          {
+            'title': 'Section 4',
+            'problems' : [
+              {
+                'problemString' : '$a($var - $b) $op $c = $d |-25|25|+ * / -' 
+              },
+              {
+                'problemString' : '$var($a + $b) + $a$var $op $d = $c|-25|25|+ * /' 
+              },
+              {
+                'problemString' : '$ab$var + $b * ($var / $a) = $c $op $d|-15|15|+ * /' 
               }
             ]
           }
