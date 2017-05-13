@@ -27,14 +27,12 @@ activitiesList = [
     },
     {
         'title':'Multiplication and Division',
-        'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)', 
         'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
         'chapterTitle': 'Chapter 1', 
         'sectionTitle': 'Section 3'
     }, 
     {
         'title':'Advanced Problems',
-        'targetDate':'Monday Mar 13 2017 17:13:04 GMT-0500 (EST)', 
         'bookId': '13382a2d-a5e0-42f5-8397-47d2bac7182f', 
         'chapterTitle': 'Chapter 1', 
         'sectionTitle': 'Section 4'
