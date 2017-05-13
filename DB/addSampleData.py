@@ -70,7 +70,6 @@ usersTable.put_item(
   }
 )
 
-classCodes = set([])
 teachingCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 
 usersTable.put_item(
@@ -80,7 +79,6 @@ usersTable.put_item(
     'activationId': '1234262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
     'userRole': 'teacher',
-    'classCodes': classCodes,
     'teaching': teachingCodes
   }
 )
