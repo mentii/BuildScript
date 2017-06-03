@@ -140,10 +140,10 @@ booksTable.put_item(
                 'problemString' : '$a($var - $b) $op $c = $d |-25|25|+ * / -' 
               },
               {
-                'problemString' : '$var($a + $b) + $a$var $op $d = $c|-25|25|+ * /' 
+                'problemString' : '$var * ($a + $b) + $a$var $op $d = $c|-25|25|+ * /' 
               },
               {
-                'problemString' : '$ab$var + $b * ($var / $a) = $c $op $d|-15|15|+ * /' 
+                'problemString' : '$amulb$var + $b * ($var / $a) = $c $op $d|-15|15|+ * /' 
               }
             ]
           }
