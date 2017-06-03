@@ -40,7 +40,7 @@ activitiesList = [
     ]
 
 studentSet = set(['student@mentii.me'])
-
+'''
 classesTable.put_item(
   Item={
     'title': 'Algebra I',
@@ -52,7 +52,7 @@ classesTable.put_item(
     'students': studentSet
   }
 )
-
+'''
 
 classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 
@@ -60,27 +60,27 @@ classCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 usersTable.put_item(
   Item={
     'email': 'student@mentii.me',
-    'password': '5f4dcc3b5aa765d61d8327deb882cf99',
+    'password': 'ce8f8a02b2e2741a6e79e62280d3b5ec',
     'activationId': '1231262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
-    'userRole': 'student',
-    'classCodes': classCodes
+    'userRole': 'student'
+  #  'classCodes': classCodes
   }
 )
 
-teachingCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
+#teachingCodes = set(['d26713cc-f02d-4fd6-80f0-026784d1ab9b'])
 
 usersTable.put_item(
   Item={
     'email': 'teacher@mentii.me',
-    'password': '5f4dcc3b5aa765d61d8327deb882cf99',
+    'password': 'ce8f8a02b2e2741a6e79e62280d3b5ec',
     'activationId': '1234262d-a5e0-40f5-8397-47d2daa7182f',
     'active': 'T',
-    'userRole': 'teacher',
-    'teaching': teachingCodes
+    'userRole': 'teacher'
+    #'teaching': teachingCodes
   }
 )
-
+'''
 ## Add sample book
 booksTable.put_item(
   Item={
@@ -195,3 +195,4 @@ booksTable.put_item(
     ]
   }
 )
+'''
